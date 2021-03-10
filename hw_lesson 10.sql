@@ -20,12 +20,12 @@ CREATE INDEX posts_head_idx ON posts(head);
 отношение в процентах (общее количество пользователей в группе / всего пользователей в системе) * 100 */
 
 SELECT DISTINCT communities.name,
-	COUNT(communities_users.community_id) OVER () / MAX(communities_users.community_id) OVER () AS average_by_groups,
-	FIRST_VALUE(users.id) OVER (PARTITION BY communities_users.community_id ORDER BY profiles.birthday DESC) AS younger_user,
- 	FIRST_VALUE(users.id) OVER (PARTITION BY communities_users.community_id ORDER BY profiles.birthday) AS older_user,
-	COUNT(communities_users.user_id) OVER (PARTITION BY communities_users.community_id) AS users_by_groups,
+	COUNT(communities_users.community_id) OVER () / MAX(communities_users.community_id) OVER () AS average_by_all_groups,
+	FIRST_VALUE(users.id) OVER (PARTITION BY communities_users.community_id ORDER BY profiles.birthday DESC) AS youngest_user,
+ 	FIRST_VALUE(users.id) OVER (PARTITION BY communities_users.community_id ORDER BY profiles.birthday) AS oldest_user,
+	COUNT(communities_users.community_id) OVER (PARTITION BY communities_users.community_id) AS users_by_groups,
   	MAX(users.id) OVER () AS total_users,
-    COUNT(communities_users.user_id) OVER (PARTITION BY communities_users.community_id) / MAX(users.id) OVER () * 100 AS percentage_by_groups
+  	COUNT(communities_users.community_id) OVER (PARTITION BY communities_users.community_id) / MAX(users.id) OVER () * 100 AS percentage_by_groups
 	FROM communities_users
 		LEFT JOIN communities
         	ON communities_users.community_id = communities.id
